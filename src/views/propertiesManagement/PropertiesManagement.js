@@ -8,6 +8,8 @@ import ExcelJS from 'exceljs'
 import { exportDataGrid } from 'devextreme/excel_exporter'
 import saveAs from 'file-saver'
 import * as Icon from 'react-bootstrap-icons'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 import DataGrid, {
   Column,
   FilterRow,
@@ -27,14 +29,22 @@ const GetPropertiesStatus_URL = 'api/get_properties_status'
 const GetAddres_URL = '/api/get_address'
 const AddProperties_URL = '/api/add_properties'
 const GetProperties_URL = '/api/get_properties'
+
+const schema = yup.object().shape({
+  properties_name: yup.string().required(),
+  serial_number: yup.string().required(),
+  properties_status: yup.number().required(),
+  quantity: yup.number().required(),
+})
 function CustomModal(props) {
   const [propStatusOption, setPropStatusOption] = useState([])
 
   const userRef = useRef()
 
   React.useEffect(() => {}, [])
-  const { register, errors, handleSubmit, watch, reset } = useForm({
+  const { register, errors, handleSubmit, reset } = useForm({
     mode: 'onChange',
+    resolver: yupResolver(schema),
   })
 
   const [errMsg, setErrMsg] = useState('')
@@ -55,8 +65,12 @@ function CustomModal(props) {
         })
         .then((data) => {
           reset()
-          Notify.notifySuccess('Item was added Succefully')
-          console.log(data)
+          console.log(data.data[0].data[0])
+          if ((data.data[0].data[0].code = 111)) {
+            Notify.notifySuccess('Project was added Succefully')
+          } else {
+            Notify.notifyError('failed to add new project')
+          }
         })
 
       setSuccess(true)
@@ -76,10 +90,6 @@ function CustomModal(props) {
         console.log(err)
       })
   }
-
-  // useEffect(() => {
-  //   Getproperties()
-  // }, [])
 
   useEffect(() => {
     axios({
@@ -111,13 +121,14 @@ function CustomModal(props) {
                   placeholder="Enter Propertiy Name"
                   name="properties_name"
                   {...register('properties_name')}
+                  required
                 />
               </Form.Group>
             </Col>
             <Col md={6}>
               {' '}
               <Form.Label>Property Status</Form.Label>
-              <Form.Select aria-label="Default select" {...register('properties_status')}>
+              <Form.Select aria-label="Default select" {...register('properties_status')} required>
                 <option value="">Choose Status </option>
                 {propStatusOption.length > 0 &&
                   propStatusOption.map((properties_status) => (
@@ -138,6 +149,7 @@ function CustomModal(props) {
                   placeholder="Enter Quantity"
                   name="quantity"
                   {...register('quantity')}
+                  required
                 />
               </Form.Group>
             </Col>
@@ -149,6 +161,7 @@ function CustomModal(props) {
                   placeholder="Enter Quantity"
                   name="serial_number"
                   {...register('serial_number')}
+                  required
                 />
               </Form.Group>
             </Col>
