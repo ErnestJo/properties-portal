@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
-import { Button, Card, Modal, Form, Row, Col } from 'react-bootstrap'
+import { Button, Card, Modal, Form, Row, Col, Badge } from 'react-bootstrap'
 import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import ExcelJS from 'exceljs'
@@ -260,7 +260,7 @@ const PropertiesRequest = () => {
 
   const onExporting = (e) => {
     const workbook = new ExcelJS.Workbook()
-    const worksheet = workbook.addWorksheet('User sheet')
+    const worksheet = workbook.addWorksheet('request properties sheet')
 
     exportDataGrid({
       component: e.component,
@@ -268,7 +268,7 @@ const PropertiesRequest = () => {
       autoFilterEnabled: true,
     }).then(() => {
       workbook.xlsx.writeBuffer().then((buffer) => {
-        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'UserList.xlsx')
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'requestList.xlsx')
       })
     })
     e.cancel = true
@@ -319,7 +319,38 @@ const PropertiesRequest = () => {
             <Column dataField="staff" caption="Staff Name" />
             <Column dataField="properties_name" caption="Item Name" />
             <Column dataField="req_date" caption="Request Date" />
-            <Column dataField="request_status" caption="Request status" />
+            <Column
+              dataField="request_status"
+              caption="Request status"
+              allowFiltering={false}
+              cellRender={(e) => {
+                if (e.data.request_status == 'Approved') {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge pill bg="success">
+                        {e.data.request_status}
+                      </Badge>
+                    </div>
+                  )
+                } else if (e.data.request_status == 'Pending') {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge pill bg="secondary">
+                        {e.data.request_status}
+                      </Badge>
+                    </div>
+                  )
+                } else if (e.data.request_status == 'Rejected') {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge pill bg="danger">
+                        {e.data.request_status}
+                      </Badge>
+                    </div>
+                  )
+                }
+              }}
+            />
             <Column
               dataField="properties_req_id"
               caption="Actions"

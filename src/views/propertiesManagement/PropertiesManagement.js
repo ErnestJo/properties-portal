@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
-import { Button, Card, Modal, Form, Row, Col } from 'react-bootstrap'
+import { Button, Card, Modal, Form, Row, Col, Badge } from 'react-bootstrap'
 import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import ExcelJS from 'exceljs'
@@ -255,9 +255,28 @@ const PropertiesManagement = () => {
             columnAutoWidth={true}
           >
             <Column dataField="properties_name" caption="Item Name" />
-            <Column dataField="quantity" caption="Quantity Status" />
-            <Column dataField="properties_status_name" caption="Item current Condition" />
             <Column dataField="quantity" caption="Available" />
+            <Column
+              dataField="properties_status_name"
+              caption="Properties "
+              allowFiltering={false}
+              cellRender={(e) => {
+                if (e.data.projectstatus == 'Good Condition') {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge bg="success">{e.data}</Badge>
+                      {console.log(e.data)}
+                    </div>
+                  )
+                } else {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge bg="secondary">{e.data.properties_status_name}</Badge>
+                    </div>
+                  )
+                }
+              }}
+            />
             <Column
               dataField="properties_id"
               caption="Actions"
