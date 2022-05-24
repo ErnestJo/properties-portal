@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Card, Modal, Form, Row, Col } from 'react-bootstrap'
+import { Button, Card, Modal, Form, Row, Col, Badge } from 'react-bootstrap'
 import { useEffect, useState, useRef } from 'react'
 import AddProjectForm from '../../components/forms/AddProjectForm'
 import axios from 'axios'
@@ -272,9 +272,34 @@ const ProjectManagement = () => {
           >
             <Column dataField="project" caption="Projects" />
             <Column dataField="client" caption="Clients" />
-            <Column dataField="projectstatus" caption="Project Status" />
             <Column dataField="startdate" caption="Start Date" />
             <Column dataField="enddate" caption="End Date" />
+            <Column
+              dataField="projectstatus"
+              caption="Project Status"
+              allowFiltering={false}
+              cellRender={(e) => {
+                if (e.data.projectstatus == 'Stopped') {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge bg="danger">{e.data.projectstatus}</Badge>
+                    </div>
+                  )
+                } else if (e.data.projectstatus == 'On Going') {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge bg="primary">{e.data.projectstatus}</Badge>
+                    </div>
+                  )
+                } else if (e.data.projectstatus == 'New') {
+                  return (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Badge bg="success">{e.data.projectstatus}</Badge>
+                    </div>
+                  )
+                }
+              }}
+            ></Column>
             <Column
               dataField="project_id"
               caption="Actions"
