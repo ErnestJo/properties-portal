@@ -6,11 +6,12 @@ import { useEffect, useRef, useState, useContext } from 'react'
 import loginIcon from '../../assets/images/man.png'
 import loginSvg from '../../assets/images/image.svg'
 import axios from 'axios'
-import { connect } from 'react-redux'
 import Notify from '../../Helper/Notify'
+import { connect } from 'react-redux'
+import { InsertUserData } from 'src/actions/request'
 
 const LOGIN_URL = '/api/login'
-function Login() {
+function Login({ sharedState, InsertUserData, ...prop }) {
   const navigate = useNavigate()
   const userRef = useRef()
   const errRef = useRef()
@@ -39,7 +40,8 @@ function Login() {
       console.log(response.data[0].data[0])
 
       if (response.data[0].data.length != 0) {
-        Notify.notifySuccess('Successfuly LogedIn')
+        InsertUserData(response.data[0].data[0])
+        Notify.notifySuccess(`${response.data[0].data[0].staff} You have logged in Successufuly`)
         navigate('/dashboard')
       } else {
         Notify.notifyErrorTopCenter('Sorry failed to login')
@@ -95,7 +97,7 @@ function Login() {
   )
 }
 
-// const MapStateToProps = (state) => ({
-//   sharedState: state.sharedState,
-// })
-export default Login
+const MapStateToProps = (state) => ({
+  sharedState: state.SharedState,
+})
+export default connect(MapStateToProps, { InsertUserData })(Login)

@@ -23,12 +23,21 @@ import {
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { useNavigate } from 'react-router-dom'
+import { clearStore } from '../../actions/request'
+import { connect } from 'react-redux'
+import Notify from '../../Helper/Notify'
 
-const AppHeaderDropdown = () => {
+const AppHeaderDropdown = ({ clearStore, ...prop }) => {
   const navigate = useNavigate()
-  const handleClick = () => {
+  const handleClick = () => {}
+
+  const signOut = (e) => {
+    e.preventDefault()
+    clearStore()
     navigate('/login')
+    Notify.notifySuccess('Succesfull logout')
   }
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
@@ -45,7 +54,7 @@ const AppHeaderDropdown = () => {
           Settings
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem onClick={handleClick} to="/login">
+        <CDropdownItem onClick={(e) => signOut(e)}>
           <CIcon icon={cilAccountLogout} className="me-2" />
           Logout
         </CDropdownItem>
@@ -54,4 +63,8 @@ const AppHeaderDropdown = () => {
   )
 }
 
-export default AppHeaderDropdown
+const MapStateToProps = (state) => ({
+  sharedState: state.sharedState,
+})
+
+export default connect(MapStateToProps, { clearStore })(AppHeaderDropdown)

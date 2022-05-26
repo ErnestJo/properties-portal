@@ -1,17 +1,27 @@
-import { createStore } from 'redux'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import SharedState from './reducers/sharedReducers'
+import { persistStore, persistReducer } from 'redux-persist'
+import changeState from './reducers/layoutReducers'
+import storage from 'redux-persist/lib/storage'
+const middleware = [thunk]
 
-const initialState = {
-  sidebarShow: true,
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['SharedState'],
 }
 
-const changeState = (state = initialState, { type, ...rest }) => {
-  switch (type) {
-    case 'set':
-      return { ...state, ...rest }
-    default:
-      return state
-  }
-}
+const rootReducer = combineReducers({
+  SharedState: SharedState,
+  changeState: changeState,
+})
+// const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middleware)))
 
-const store = createStore(changeState)
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+const store = createStore(persistedReducer, composeWithDevTools(applyMiddleware(...middleware)))
+const persistor = persistStore(store)
+export { persistor }
 export default store

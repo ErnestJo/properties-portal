@@ -1,13 +1,11 @@
-import React, { Component, Suspense } from 'react'
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import React, { Component, Suspense, useState, useMemo, useEffect } from 'react'
+import { HashRouter, Route, Routes, Navigate } from 'react-router-dom'
 import './scss/style.scss'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import 'devextreme/dist/css/dx.light.css'
 import 'react-toastify/dist/ReactToastify.css'
-import { PersistGate } from 'redux-persist/integration/react'
 import ClipLoader from 'react-spinners/ClipLoader'
-import { Provider, connect } from 'react-redux'
-import store from './store'
+import { connect } from 'react-redux'
 
 const loading = () => (
   <div className="animated fadeIn pt-3 text-center center-layout-loading">
@@ -21,24 +19,55 @@ const Login = React.lazy(() => import('./views/authentication/Login'))
 const Page404 = React.lazy(() => import('./views/error/Page404'))
 const Page500 = React.lazy(() => import('./views/error/Page500'))
 
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <ToastContainer />
-        <HashRouter>
-          <Suspense fallback={loading}>
-            <Routes>
-              <Route exact path="/login" name="Login Page" element={<Login />} />
-              <Route exact path="/404" name="Login Page" element={<Page404 />} />
-              <Route exact path="/500" name="Login Page" element={<Page500 />} />
-              <Route path="*" name="Home" element={<DefaultLayout />} />
-            </Routes>
-          </Suspense>
-        </HashRouter>
-      </Provider>
-    )
-  }
+// class App extends Component {
+
+//   render() {
+//     return (
+//       <>
+//         <ToastContainer />
+//         <HashRouter>
+//           <Suspense fallback={loading}>
+//             <Routes>
+//               <Route exact path="/login" name="Login Page" element={<Login />} />
+//               <Route exact path="/404" name="Login Page" element={<Page404 />} />
+//               <Route exact path="/500" name="Login Page" element={<Page500 />} />
+//               <Route path="*" name="Home" element={<DefaultLayout />} />
+//             </Routes>
+//           </Suspense>
+//         </HashRouter>
+//       </>
+//     )
+//   }
+// }
+
+function App({ sharedState }) {
+  // useEffect(() => {
+  //   let user = sharedState.userData
+  //   if (user == '') {
+  //     // navigate('/login', { replace: true })
+  //     console.log('jaksa')
+  //     return <Routes>
+  //     </Routes>
+  //   }
+  // }, [])
+  return (
+    <>
+      <ToastContainer />
+      <HashRouter>
+        <Suspense fallback={loading}>
+          <Routes>
+            <Route exact path="/login" name="Login Page" element={<Login />} />
+            <Route exact path="/404" name="Login Page" element={<Page404 />} />{' '}
+            <Route exact path="/500" name="Login Page" element={<Page500 />} />
+            <Route path="*" name="Home" element={<DefaultLayout />} />
+          </Routes>{' '}
+        </Suspense>
+      </HashRouter>
+    </>
+  )
 }
 
-export default App
+const MapStateToProps = (state) => ({
+  sharedState: state.SharedState,
+})
+export default connect(MapStateToProps)(App)

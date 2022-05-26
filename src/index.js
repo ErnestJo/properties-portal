@@ -6,16 +6,15 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
-import { Provider, connect } from 'react-redux'
+import { Provider } from 'react-redux'
+import store from './store'
+import { persistor } from './store'
 import { PersistGate } from 'redux-persist/integration/react'
-import store from './stores'
-import persistor from './stores'
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider Provider store={store}>
     <App />
   </Provider>,
-
   document.getElementById('root'),
 )
 
